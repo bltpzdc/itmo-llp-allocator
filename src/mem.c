@@ -149,6 +149,7 @@ static struct block_search_result try_memalloc_existing ( size_t query, struct b
 
 
 static struct block_header* grow_heap( struct block_header* restrict last, size_t query ) {
+    if (last == NULL) return NULL;
     struct region region = alloc_region(block_after(last), query);
     if (region_is_invalid(&region)) return last;
     last->next = region.addr;
