@@ -151,12 +151,12 @@ static struct block_search_result try_memalloc_existing ( size_t query, struct b
 static struct block_header* grow_heap( struct block_header* restrict last, size_t query ) {
     if (last == NULL) return NULL;
     struct region region = alloc_region(block_after(last), query);
-
-    if (last->is_free && ! region_is_invalid(&region) && region.extends) {
-        last->capacity.bytes += region.size;
-        return last;
-    }
+    if (region_is_invalid(&region)) return last;
     last->next = region.addr;
+
+    if (region.extends){
+        if (try_merge_with_next(last)) return last;
+    }
     return region.addr;
 }
 
