@@ -4,3 +4,5 @@
 /obj
 /out
 /report.xml
+/.idea
+/cmake-build-debug
