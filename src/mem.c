@@ -151,12 +151,12 @@ static struct block_search_result try_memalloc_existing ( size_t query, struct b
 static struct block_header* grow_heap( struct block_header* restrict last, size_t query ) {
     if (last == NULL) return NULL;
     struct region region = alloc_region(block_after(last), query);
-    if (region_is_invalid(&region)) return last;
-    last->next = region.addr;
 
-    if (region.extends){
-        if (try_merge_with_next(last)) return last;
+    if (last->is_free && ! region_is_invalid(&region) && region.extends) {
+        last->capacity.bytes += region.size;
+        return last;
     }
+    last->next = region.addr;
     return region.addr;
 }
 
@@ -165,14 +165,14 @@ static struct block_header* memalloc( size_t query, struct block_header* heap_st
     query = size_max(query, BLOCK_MIN_CAPACITY);
     struct block_search_result result = try_memalloc_existing(query, heap_start);
 
-    if (result.type == BSR_CORRUPTED) return NULL;
     if (result.type == BSR_REACHED_END_NOT_FOUND){
         result.block = grow_heap(result.block, query);
         if (result.block == NULL) return NULL;
         result = try_memalloc_existing(query, result.block);
     }
 
-    result.block->is_free = false;
+    if (result.type == BSR_CORRUPTED) return NULL;
+
     return result.block;
 }
 
