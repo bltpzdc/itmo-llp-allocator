@@ -20,10 +20,10 @@ endif()
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS *.c *.h)
 list(FILTER sources EXCLUDE REGEX main.c)
 
-add_library(memalloc STATIC ${sources})
+add_library(memalloc STATIC ${sources} tests.h tests.c main.c)
 target_include_directories(memalloc PUBLIC .)
 
-if(EXISTS main.c)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/main.c)
     add_executable(memalloc_exe main.c)
     target_link_libraries(memalloc_exe PRIVATE memalloc)
     set_target_properties(memalloc_exe PROPERTIES OUTPUT_NAME memalloc)
