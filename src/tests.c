@@ -1,5 +1,5 @@
 //
-// Created by Honor on 26.11.2022.
+// Created by Sevastian on 26.11.2022.
 //
 #include "mem.h"
 #include "tests.h"
